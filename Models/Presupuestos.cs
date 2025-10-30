@@ -1,44 +1,18 @@
-using System.Diagnostics;
-using System.Linq.Expressions;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+namespace TP07.Models;
 
 public class Presupuestos
 {
-    // private int idPresupuesto;
-    // private string? nombreDestinatario;
-    // private string? fechaCreacion;
-    // private List<PresupuestoDetalle> detalle = new();
+    public int IdPresupuesto { get; set; }
+    public string NombreDestinatario { get; set; } = string.Empty;
+    public string FechaCreacion { get; set; } = DateTime.Now.ToString("yyyy-MM-dd");
+    public List<PresupuestoDetalle> Detalle { get; set; } = new();
 
-    public int IdPresupuestos { get ; set ; }
-    public string? NombreDestinatario { get ; set; }
-    public string? FechaCreacion { get ; set ; }
-    public List<PresupuestoDetalle> Detalle { get ; set; }
+    public float MontoPresupuesto()
+        => Detalle.Sum(d => d.Producto.Precio * d.Cantidad);
 
-    public float MontoPresupuesto(int id)
-    {
-        if (id != idPresupuesto)
-            return 0;
+    public float MontoPresupuestoConIva()
+        => MontoPresupuesto() * 1.21f;
 
-
-        float montoTotal = detalle.Sum(d => d.Producto.Precio * d.Cantidad);
-
-        return montoTotal;
-    }
-
-
-    public float MontoPresupuestoConIva(int id)
-    {
-        float iva = 1.21F;
-        float montoConIva = MontoPresupuesto(id) * iva;
-
-        return (montoConIva);
-    }
-    
-   public int CantidadProductos(int id)
-    {
-        int totalProductos = detalle.Sum(p => p.Cantidad);
-        return (totalProductos);
-    }
+    public int CantidadProductos()
+        => Detalle.Sum(p => p.Cantidad);
 }
-

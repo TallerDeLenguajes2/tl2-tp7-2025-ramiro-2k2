@@ -1,24 +1,48 @@
 using Microsoft.AspNetCore.Mvc;
-namespace TP6.Controllers;
+using TP07.Models;
+using TP07.Repositorios;
 
+namespace TP07.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class ProductoController : ControllerBase
 {
-    private ProductoRepository _productoRepository;
+    private readonly ProductoRepository repository = new();
 
-    public ProductoController()
+    [HttpPost]
+    public ActionResult Crear(Productos producto)
     {
-        _productoRepository = new ProductoRepository();
+        repository.Crear(producto);
+        return Ok("Producto creado correctamente");
     }
 
-    [HttpGet("products")]
-    public IActionResult GetAll()
+    [HttpPut("{id}")]
+    public ActionResult Modificar(int id, Productos producto)
     {
-        var prductos = _productoRepository.GetAll();
-        return Ok(productos);
+        repository.Modificar(id, producto);
+        return Ok("Producto modificado correctamente");
+    }
 
-    }   
+    [HttpGet]
+    public ActionResult<List<Productos>> Listar()
+    {
+        return Ok(repository.GetAll());
+    }
 
+    [HttpGet("{id}")]
+    public ActionResult<Productos?> Obtener(int id)
+    {
+        var prod = repository.GetById(id);
+        if (prod == null) return NotFound();
+        return Ok(prod);
+    }
+
+    [HttpDelete("{id}")]
+    public ActionResult Eliminar(int id)
+    {
+        bool eliminado = repository.Eliminar(id);
+        if (!eliminado) return NotFound();
+        return NoContent();
+    }
 }
